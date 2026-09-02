@@ -1,0 +1,12 @@
+{
+  "name": "hospital-management-system",
+  "version": "1.0.0",
+  "description": "A simple hospital management system website with frontend and backend APIs",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "nodemailer": "^9.0.3"
+  }
+}

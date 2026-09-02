@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Portal</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="container page-shell">
+      <div class="page-nav"><a href="/">← Back to home</a></div>
+      <div class="card">
+        <h2>Admin Dashboard</h2>
+        <p>Manage doctors, patients, and staff efficiently.</p>
+        <ul class="list-inline">
+          <li>• Add and update doctor profiles</li>
+          <li>• Review patient registrations</li>
+          <li>• Manage staff schedules and access</li>
+        </ul>
+      </div>
+
+      <div class="card" style="margin-top: 1rem;">
+        <h2>Add Doctor</h2>
+        <form id="doctor-form">
+          <input type="text" name="name" placeholder="Doctor name" required />
+          <input type="text" name="specialty" placeholder="Specialty" required />
+          <button type="submit">Save doctor</button>
+        </form>
+        <div id="doctor-message" class="message"></div>
+      </div>
+
+      <div class="card" style="margin-top: 1rem;">
+        <h2>Add Staff Member</h2>
+        <form id="staff-form">
+          <input type="text" name="name" placeholder="Staff name" required />
+          <input type="text" name="role" placeholder="Role" required />
+          <input type="text" name="department" placeholder="Department" required />
+          <button type="submit">Save staff</button>
+        </form>
+        <div id="staff-message" class="message"></div>
+      </div>
+
+      <div class="card" style="margin-top: 1rem;">
+        <h2>Doctor List</h2>
+        <ul id="admin-doctors-list"></ul>
+      </div>
+
+      <div class="card" style="margin-top: 1rem;">
+        <h2>Staff List</h2>
+        <ul id="admin-staff-list"></ul>
+      </div>
+
+      <div class="card" style="margin-top: 1rem;">
+        <h2>Today's Presence</h2>
+        <div class="presence-grid">
+          <div class="presence-panel">
+            <h3>Doctors Present Today</h3>
+            <p class="presence-count" id="doctor-presence-count">0</p>
+            <ul id="doctor-presence-list"></ul>
+          </div>
+          <div class="presence-panel">
+            <h3>Staff Present Today</h3>
+            <p class="presence-count" id="staff-presence-count">0</p>
+            <ul id="staff-presence-list"></ul>
+          </div>
+        </div>
+      </div>
+    </main>
+    <script src="/app.js"></script>
+  </body>
+</html>
+    </main>
+  </body>
+</html>

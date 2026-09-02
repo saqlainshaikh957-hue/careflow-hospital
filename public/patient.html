@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Patient Portal</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="container page-shell">
+      <div class="page-nav"><a href="/">← Back to home</a></div>
+      <div class="card">
+        <h2>Patient Portal</h2>
+        <p>Book appointments and view your personal history.</p>
+        <ul class="list-inline">
+          <li>• Book new appointments</li>
+          <li>• View previous visits</li>
+          <li>• Check prescriptions and reports</li>
+        </ul>
+        <a class="btn primary" href="/booking.html">Book Appointment</a>
+      </div>
+
+      <div class="card" style="margin-top: 1rem;">
+        <h2>Save Medical Record</h2>
+        <form id="patient-record-form">
+          <input type="text" name="patientName" placeholder="Patient name" required />
+          <input type="date" name="date" required />
+          <textarea name="note" rows="4" placeholder="Medical note" required></textarea>
+          <button type="submit">Save record</button>
+        </form>
+        <div id="patient-record-message" class="message"></div>
+      </div>
+
+      <div class="card" style="margin-top: 1rem;">
+        <h2>Our Doctors</h2>
+        <div id="patient-doctor-directory-list" class="doctor-list"></div>
+      </div>
+
+      <div class="card" style="margin-top: 1rem;">
+        <h2>Stored Patient Records</h2>
+        <ul id="patient-records-dashboard-list"></ul>
+      </div>
+    </main>
+    <script src="/app.js"></script>
+  </body>
+</html>
+    </main>
+  </body>
+</html>

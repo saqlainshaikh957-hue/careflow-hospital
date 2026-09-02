@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Book Appointment</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="container page-shell">
+      <div class="page-nav"><a href="/">← Back to home</a></div>
+      <div class="card">
+        <h2>Book Appointment</h2>
+        <form id="appointment-form">
+          <input type="text" name="patientName" placeholder="Patient name" required />
+          <input type="date" name="date" required />
+          <select name="doctor" id="appointment-doctor-select" required></select>
+          <input type="text" name="status" placeholder="Status" />
+          <button type="submit">Book appointment</button>
+        </form>
+        <div id="appointment-message" class="message"></div>
+      </div>
+
+      <div class="card" style="margin-top: 1rem;">
+        <h2>All Booked Appointments</h2>
+        <ul id="appointment-records-list"></ul>
+      </div>
+    </main>
+    <script src="/app.js"></script>
+  </body>
+</html>

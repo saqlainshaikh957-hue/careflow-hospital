@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register Patient</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="container page-shell">
+      <div class="page-nav"><a href="/">← Back to home</a></div>
+      <div class="card">
+        <h2>Register Patient</h2>
+        <form id="patient-form">
+          <input type="text" name="name" placeholder="Patient name" required />
+          <input type="number" name="age" placeholder="Age" required />
+          <select name="doctor" id="doctor-select" required></select>
+          <input type="text" name="status" placeholder="Status" />
+          <button type="submit">Register patient</button>
+        </form>
+        <div id="patient-message" class="message"></div>
+      </div>
+
+      <div class="card" style="margin-top: 1rem;">
+        <h2>All Registered Patients</h2>
+        <ul id="patient-records-list"></ul>
+      </div>
+    </main>
+    <script src="/app.js"></script>
+  </body>
+</html>

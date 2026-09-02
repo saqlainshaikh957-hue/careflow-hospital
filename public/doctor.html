@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Doctor Portal</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="container page-shell">
+      <div class="page-nav"><a href="/">← Back to home</a></div>
+      <div class="card">
+        <h2>Doctor Portal</h2>
+        <p>View appointments and review patient records.</p>
+        <ul class="list-inline">
+          <li>• See today's appointments</li>
+          <li>• Open patient medical records</li>
+          <li>• Update treatment progress</li>
+        </ul>
+      </div>
+
+      <div class="card" style="margin-top: 1rem;">
+        <h2>Doctor Availability</h2>
+        <p id="doctor-count-message">Loading available doctors...</p>
+        <div id="doctor-availability-list" class="doctor-list"></div>
+      </div>
+
+      <div class="card" style="margin-top: 1rem;">
+        <h2>All Doctors</h2>
+        <div id="doctor-directory-list" class="doctor-list"></div>
+      </div>
+    </main>
+    <script src="/app.js"></script>
+  </body>
+</html>
+    </main>
+  </body>
+</html>
