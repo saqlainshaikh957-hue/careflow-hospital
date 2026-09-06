@@ -3,7 +3,7 @@ REM Start server in a new CMD window, wait for port 3000, then open browser
 cd /d "%~dp0"
 
 REM Start server in new window
-start "CareFlow Server" cmd /k "npm start"
+start "CareFlow Server" cmd /k "npm.cmd start"
 
 echo Waiting up to 60 seconds for server to listen on port 3000...
 set /a COUNT=0

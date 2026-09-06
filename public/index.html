@@ -7,57 +7,69 @@
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
+    <nav class="topbar">
+      <div class="container nav-inner">
+        <a class="brand" href="/"><span class="brand-mark">+</span> CareFlow Hospital</a>
+        <div class="nav-links">
+          <a href="/doctor.html">Doctors</a>
+          <a href="/booking.html">Appointments</a>
+          <a href="/contact.html">Contact</a>
+          <a class="btn primary" href="/login.html">Portal login</a>
+        </div>
+      </div>
+    </nav>
     <header class="hero">
-      <div class="hero-content">
-        <p class="eyebrow">CareFlow Hospital</p>
-        <h1>Patient care made simple.</h1>
+      <div class="container hero-content">
+        <p class="eyebrow">Connected care, clearer days</p>
+        <h1>Health care that moves with you.</h1>
         <p>
-          A modern hospital platform for Admin, Doctor, and Patient workflows with organized records, smooth booking, and clear support.
+          CareFlow brings appointments, patient records, doctors, and support into one calm, easy-to-use hospital workspace.
         </p>
         <div class="hero-actions">
-          <a class="btn primary" href="/register.html">Register Patient</a>
+          <a class="btn primary" href="/register.html">Register a patient</a>
           <a class="btn secondary" href="/booking.html">Book Appointment</a>
-          <a class="btn secondary" href="/login.html">Login</a>
         </div>
       </div>
     </header>
 
-    <main class="container">
+    <main class="container main-content">
       <section class="stats-grid" id="stats"></section>
 
       <section class="cards">
         <div class="card">
-          <h2>Why this system?</h2>
+          <p class="section-kicker">Built for busy teams</p>
+          <h2>One workspace for every shift.</h2>
           <ul class="feature-list">
-            <li>Fast patient registration</li>
+            <li>Fast patient registration and intake</li>
             <li>Simple appointment scheduling</li>
             <li>Clear doctor and patient visibility</li>
           </ul>
         </div>
 
         <div class="card">
-          <h2>Quick start</h2>
-          <p>Use the buttons above to move to the registration or booking page. Every portal is designed to support Admin, Doctor, and Patient needs with style and clarity.</p>
+          <p class="section-kicker">Start here</p>
+          <h2>Good care starts with good information.</h2>
+          <p>Choose the workspace that matches your role. Every screen is designed to keep the next important action close at hand.</p>
         </div>
       </section>
 
       <section class="role-grid">
         <div class="card role-card">
-          <div class="character-bubble doctor">🧑‍⚕️</div>
+          <p class="section-kicker">Operations</p>
           <h2>Admin</h2>
           <p>Manage doctors, patients, and staff from one control panel.</p>
           <a class="btn primary" href="/admin.html">Open Admin Portal</a>
         </div>
 
         <div class="card role-card">
-          <div class="character-bubble nurse">👩‍⚕️</div>
+          <p class="section-kicker">Clinical</p>
           <h2>Doctor</h2>
           <p>View appointments and access patient records quickly.</p>
           <a class="btn secondary" href="/doctor.html">Open Doctor Portal</a>
         </div>
 
         <div class="card role-card">
-          <div class="character-bubble patient">🧑‍🤝‍🧑</div>
+          <p class="section-kicker">Patient care</p>
           <h2>Patient</h2>
           <p>Book appointments and review your personal medical history.</p>
           <a class="btn primary" href="/patient.html">Open Patient Portal</a>

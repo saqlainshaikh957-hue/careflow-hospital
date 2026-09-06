@@ -9,21 +9,33 @@
   <body>
     <main class="container page-shell">
       <div class="page-nav"><a href="/">← Back to home</a></div>
-      <div class="card">
-        <h2>Contact CareFlow Hospital</h2>
-        <p>We are available 24/7 for patient support and appointments.</p>
-        <ul class="feature-list">
-          <li>Phone: +234 800 000 0000</li>
-          <li>Email: support@careflowhospital.com</li>
-          <li>Address: 123 Medical Avenue, Lagos</li>
-        </ul>
-        <form id="contact-form">
-          <input type="text" name="name" placeholder="Your name" required />
-          <input type="email" name="email" placeholder="Your email" required />
-          <textarea name="message" rows="4" placeholder="Your message" required></textarea>
-          <button type="submit">Send message</button>
-        </form>
-        <div id="contact-message" class="message"></div>
+      <div class="page-title">
+        <p class="section-kicker">We are here to help</p>
+        <h1>Contact CareFlow</h1>
+        <p>Send a message to our support team. Your enquiry will be saved and forwarded to the configured hospital email.</p>
+      </div>
+      <div class="contact-layout">
+        <section class="card contact-details">
+          <div>
+            <h2>Talk to the hospital team</h2>
+            <p>We are available 24/7 for patient support and appointments.</p>
+          </div>
+          <ul class="feature-list">
+            <li>Phone: +234 800 000 0000</li>
+            <li>Email: support@careflowhospital.com</li>
+            <li>Address: 123 Medical Avenue, Lagos</li>
+          </ul>
+        </section>
+        <section class="card">
+          <h2>Send a message</h2>
+          <form id="contact-form">
+            <input type="text" name="name" placeholder="Full name" autocomplete="name" required />
+            <input type="email" name="email" placeholder="Email address" autocomplete="email" required />
+            <textarea name="message" rows="5" placeholder="How can we help?" required></textarea>
+            <button type="submit">Send message to support</button>
+          </form>
+          <div id="contact-message" class="message"></div>
+        </section>
       </div>
     </main>
   </body>

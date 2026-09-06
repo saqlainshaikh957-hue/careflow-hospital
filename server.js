@@ -224,9 +224,15 @@ const server = http.createServer((req, res) => {
 
   if (req.method === 'POST' && url.pathname === '/api/contact-messages') {
     parseBody(req, async body => {
-      const { name, email, message } = body;
+      const name = typeof body.name === 'string' ? body.name.trim() : '';
+      const email = typeof body.email === 'string' ? body.email.trim() : '';
+      const message = typeof body.message === 'string' ? body.message.trim() : '';
       if (!name || !email || !message) {
         sendJson(res, 400, { success: false, message: 'Name, email and message are required.' });
+        return;
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        sendJson(res, 400, { success: false, message: 'Please enter a valid email address.' });
         return;
       }
       const contactMessage = {
