@@ -1,10 +1,15 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 
 const PORT = process.env.PORT || 3000;
 const PUBLIC_DIR = path.join(__dirname, 'public');
+const DATA_DIR = path.join(__dirname, 'data');
+const DOCTORS_FILE = path.join(DATA_DIR, 'doctors.json');
+const sessions = new Map();
+const SESSION_MAX_AGE = 8 * 60 * 60;
 
 let patients = [
   { id: 1, name: 'Amina Yusuf', age: 29, doctor: 'Dr. Ada Okafor', status: 'Stable' },
@@ -16,11 +21,28 @@ let appointments = [
   { id: 2, patientName: 'Tunde Bello', date: '2026-08-05', doctor: 'Dr. Michael Chen', status: 'Pending' }
 ];
 
-let doctors = [
+const defaultDoctors = [
   { id: 1, name: 'Dr. Ada Okafor', specialty: 'General Medicine', active: true, presentToday: true },
   { id: 2, name: 'Dr. Michael Chen', specialty: 'Cardiology', active: false, presentToday: false },
   { id: 3, name: 'Dr. Sara Ibrahim', specialty: 'Pediatrics', active: true, presentToday: true }
 ];
+
+function loadDoctors() {
+  try {
+    return JSON.parse(fs.readFileSync(DOCTORS_FILE, 'utf8'));
+  } catch {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+    fs.writeFileSync(DOCTORS_FILE, JSON.stringify(defaultDoctors, null, 2));
+    return [...defaultDoctors];
+  }
+}
+
+function saveDoctors() {
+  fs.mkdirSync(DATA_DIR, { recursive: true });
+  fs.writeFileSync(DOCTORS_FILE, JSON.stringify(doctors, null, 2));
+}
+
+let doctors = loadDoctors();
 
 let staff = [
   { id: 1, name: 'Sarah Johnson', role: 'Nurse', department: 'Emergency', presentToday: true, active: true },
@@ -93,8 +115,88 @@ function parseBody(req, callback) {
   });
 }
 
+function parseCookies(req) {
+  return Object.fromEntries((req.headers.cookie || '').split(';').filter(Boolean).map(cookie => {
+    const separator = cookie.indexOf('=');
+    return [cookie.slice(0, separator).trim(), decodeURIComponent(cookie.slice(separator + 1).trim())];
+  }));
+}
+
+function isAdminAuthenticated(req) {
+  const token = parseCookies(req).admin_session;
+  return Boolean(token && sessions.has(token));
+}
+
+function sendRedirect(res, location) {
+  res.writeHead(302, { Location: location, 'Cache-Control': 'no-store' });
+  res.end();
+}
+
+function protectAdminApi(req, res) {
+  if (isAdminAuthenticated(req)) {
+    return true;
+  }
+  sendJson(res, 401, { success: false, message: 'Administrator authentication required.' });
+  return false;
+}
+
 const server = http.createServer((req, res) => {
   const url = new URL(req.url, `http://${req.headers.host}`);
+
+  if (req.method === 'POST' && url.pathname === '/api/auth/login') {
+    parseBody(req, body => {
+      const username = typeof body.username === 'string' ? body.username : '';
+      const password = typeof body.password === 'string' ? body.password : '';
+      if (!process.env.ADMIN_USERNAME || !process.env.ADMIN_PASSWORD ||
+        username !== process.env.ADMIN_USERNAME || password !== process.env.ADMIN_PASSWORD) {
+        sendJson(res, 401, { success: false, message: 'Invalid username or password' });
+        return;
+      }
+
+      const token = crypto.randomBytes(32).toString('hex');
+      sessions.set(token, true);
+      const secure = process.env.NODE_ENV === 'production' ? '; Secure' : '';
+      res.writeHead(200, {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Set-Cookie': `admin_session=${encodeURIComponent(token)}; HttpOnly; SameSite=Lax; Path=/; Max-Age=${SESSION_MAX_AGE}${secure}`,
+        'Cache-Control': 'no-store'
+      });
+      res.end(JSON.stringify({ success: true, message: 'Login successful.' }));
+    });
+    return;
+  }
+
+  if (req.method === 'GET' && url.pathname === '/api/auth/me') {
+    const authenticated = isAdminAuthenticated(req);
+    sendJson(res, authenticated ? 200 : 401, { success: authenticated });
+    return;
+  }
+
+  if (req.method === 'POST' && url.pathname === '/api/auth/logout') {
+    const token = parseCookies(req).admin_session;
+    if (token) {
+      sessions.delete(token);
+    }
+    res.writeHead(200, {
+      'Content-Type': 'application/json; charset=utf-8',
+      'Set-Cookie': 'admin_session=; HttpOnly; SameSite=Lax; Path=/; Max-Age=0',
+      'Cache-Control': 'no-store'
+    });
+    res.end(JSON.stringify({ success: true }));
+    return;
+  }
+
+  if (url.pathname === '/admin' || url.pathname === '/admin.html') {
+    if (!isAdminAuthenticated(req)) {
+      sendRedirect(res, '/login.html?next=/admin.html');
+      return;
+    }
+    if (url.pathname === '/admin') {
+      sendRedirect(res, '/admin.html');
+      return;
+    }
+    res.setHeader('Cache-Control', 'no-store');
+  }
 
   if (req.method === 'GET' && url.pathname === '/api/overview') {
     sendJson(res, 200, {
@@ -153,6 +255,9 @@ const server = http.createServer((req, res) => {
   }
 
   if (req.method === 'POST' && url.pathname === '/api/doctors') {
+    if (!protectAdminApi(req, res)) {
+      return;
+    }
     parseBody(req, body => {
       const { name, specialty } = body;
       if (!name || !specialty) {
@@ -167,17 +272,24 @@ const server = http.createServer((req, res) => {
         presentToday: true
       };
       doctors.push(doctor);
+      saveDoctors();
       sendJson(res, 201, { success: true, message: 'Doctor added successfully', data: doctor });
     });
     return;
   }
 
   if (req.method === 'GET' && url.pathname === '/api/staff') {
+    if (!protectAdminApi(req, res)) {
+      return;
+    }
     sendJson(res, 200, { success: true, data: staff });
     return;
   }
 
   if (req.method === 'POST' && url.pathname === '/api/staff') {
+    if (!protectAdminApi(req, res)) {
+      return;
+    }
     parseBody(req, body => {
       const { name, role, department } = body;
       if (!name || !role || !department) {

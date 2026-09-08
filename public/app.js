@@ -28,7 +28,18 @@ const doctorCountMessage = document.getElementById('doctor-count-message');
 const doctorAvailabilityList = document.getElementById('doctor-availability-list');
 const doctorDirectoryList = document.getElementById('doctor-directory-list');
 const patientDoctorDirectoryList = document.getElementById('patient-doctor-directory-list');
+const homepageDoctorsList = document.getElementById('homepage-doctors-list');
 const loginMessage = document.getElementById('login-message');
+const logoutButton = document.getElementById('logout-button');
+
+async function checkAdminSession() {
+  const response = await fetch('/api/auth/me', { cache: 'no-store' });
+  if (!response.ok) {
+    window.location.replace('/login.html?next=/admin.html');
+    return false;
+  }
+  return true;
+}
 
 async function loadData() {
   try {
@@ -45,7 +56,8 @@ async function loadData() {
     const patients = await patientsRes.json();
     const appointments = await appointmentsRes.json();
     const doctors = await doctorsRes.json();
-    const staff = await staffRes.json();
+    const staffResponse = await staffRes.json();
+    const staff = staffResponse.success ? staffResponse : { data: [] };
     const patientRecordsData = await patientRecordsRes.json();
 
     if (statsContainer) {
@@ -77,6 +89,9 @@ async function loadData() {
     }
     if (doctorDirectoryList || patientDoctorDirectoryList) {
       renderDoctorDirectory(doctors.data);
+    }
+    if (homepageDoctorsList) {
+      renderHomepageDoctors(doctors.data);
     }
   } catch (error) {
     console.error('Failed to load hospital data', error);
@@ -206,6 +221,12 @@ function renderDoctorDirectory(items) {
   });
 }
 
+function renderHomepageDoctors(items) {
+  homepageDoctorsList.innerHTML = items.length
+    ? items.map(item => `<li><strong>${item.name}</strong></li>`).join('')
+    : '<li>No doctors available.</li>';
+}
+
 async function submitForm(form, endpoint, messageEl) {
   const formData = new FormData(form);
   const payload = Object.fromEntries(formData.entries());
@@ -267,25 +288,37 @@ if (contactForm) {
 }
 
 if (loginForm) {
-  loginForm.addEventListener('submit', (event) => {
+  loginForm.addEventListener('submit', async (event) => {
     event.preventDefault();
     const formData = new FormData(loginForm);
-    const email = formData.get('email');
+    const username = formData.get('username');
     const password = formData.get('password');
 
-    if (email === 'admin@careflow.com' && password === '123456') {
-      if (loginMessage) {
-        loginMessage.textContent = 'Login successful. Welcome to the hospital portal.';
-      }
-      window.location.href = '/admin.html';
-    } else {
-      if (loginMessage) {
-        loginMessage.textContent = 'Invalid email or password. Try the demo credentials.';
-      }
+    const response = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+    const result = await response.json();
+    if (loginMessage) {
+      loginMessage.textContent = result.message || 'Login failed.';
+    }
+    if (result.success) {
+      const next = new URLSearchParams(window.location.search).get('next');
+      window.location.replace(next === '/admin.html' ? next : '/admin.html');
     }
   });
 }
 
-if (statsContainer || appointmentsList || patientsList || patientRecordsList || appointmentRecordsList || patientForm || appointmentForm || doctorForm || staffForm || patientRecordForm || loginForm || document.getElementById('doctor-select') || document.getElementById('appointment-doctor-select')) {
+if (logoutButton) {
+  checkAdminSession();
+  logoutButton.addEventListener('click', async () => {
+    await fetch('/api/auth/logout', { method: 'POST' });
+    window.location.replace('/login.html');
+  });
+  window.addEventListener('pageshow', checkAdminSession);
+}
+
+if (statsContainer || appointmentsList || patientsList || patientRecordsList || appointmentRecordsList || patientForm || appointmentForm || doctorForm || staffForm || patientRecordForm || document.getElementById('doctor-select') || document.getElementById('appointment-doctor-select')) {
   loadData();
 }
