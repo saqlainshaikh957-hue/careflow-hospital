@@ -319,6 +319,6 @@ if (logoutButton) {
   window.addEventListener('pageshow', checkAdminSession);
 }
 
-if (statsContainer || appointmentsList || patientsList || patientRecordsList || appointmentRecordsList || patientForm || appointmentForm || doctorForm || staffForm || patientRecordForm || document.getElementById('doctor-select') || document.getElementById('appointment-doctor-select')) {
+if (statsContainer || appointmentsList || patientsList || patientRecordsList || appointmentRecordsList || patientForm || appointmentForm || doctorForm || staffForm || patientRecordForm || doctorCountMessage || doctorAvailabilityList || doctorDirectoryList || document.getElementById('doctor-select') || document.getElementById('appointment-doctor-select')) {
   loadData();
 }
