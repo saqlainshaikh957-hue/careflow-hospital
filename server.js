@@ -8,24 +8,83 @@ const PORT = process.env.PORT || 3000;
 const PUBLIC_DIR = path.join(__dirname, 'public');
 const DATA_DIR = path.join(__dirname, 'data');
 const DOCTORS_FILE = path.join(DATA_DIR, 'doctors.json');
+const APPOINTMENTS_FILE = path.join(DATA_DIR, 'appointments.json');
+const PATIENTS_FILE = path.join(DATA_DIR, 'patients.json');
 const sessions = new Map();
 const SESSION_MAX_AGE = 8 * 60 * 60;
 
-let patients = [
-  { id: 1, name: 'Amina Yusuf', age: 29, doctor: 'Dr. Ada Okafor', status: 'Stable' },
-  { id: 2, name: 'Tunde Bello', age: 41, doctor: 'Dr. Michael Chen', status: 'Pending Review' }
+function getLocalDateString(date = new Date()) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function getCurrentDateString() {
+  return getLocalDateString(new Date());
+}
+
+const validTimeSlots = ['08:00', '09:00', '10:30', '12:00', '14:00', '15:30', '17:00'];
+const todayDate = getCurrentDateString();
+
+const defaultPatients = [
+  { id: 1, name: 'Amina Yusuf', age: 29, doctor: 'Dr. Ada Okafor', status: 'Stable', registrationDate: '2026-08-01' },
+  { id: 2, name: 'Tunde Bello', age: 41, doctor: 'Dr. Michael Chen', status: 'Pending Review', registrationDate: '2026-08-02' }
 ];
 
-let appointments = [
-  { id: 1, patientName: 'Amina Yusuf', date: '2026-08-02', doctor: 'Dr. Ada Okafor', status: 'Confirmed' },
-  { id: 2, patientName: 'Tunde Bello', date: '2026-08-05', doctor: 'Dr. Michael Chen', status: 'Pending' }
+const defaultAppointments = [
+  { id: 1, patientName: 'Amina Yusuf', date: '2026-08-01', time: '09:00', doctor: 'Dr. Ada Okafor', status: 'Confirmed' },
+  { id: 2, patientName: 'Tunde Bello', date: '2026-08-02', time: '15:30', doctor: 'Dr. Michael Chen', status: 'Pending' }
 ];
+
+function loadAppointments() {
+  try {
+    const existing = JSON.parse(fs.readFileSync(APPOINTMENTS_FILE, 'utf8'));
+    return existing.map(appointment => {
+      const normalizedDate = /^\d{4}-\d{2}-\d{2}$/.test(appointment.date || '') ? appointment.date : todayDate;
+      const normalizedTime = validTimeSlots.includes(appointment.time) ? appointment.time : '09:00';
+      return {
+        ...appointment,
+        date: normalizedDate,
+        time: normalizedTime
+      };
+    });
+  } catch {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+    fs.writeFileSync(APPOINTMENTS_FILE, JSON.stringify(defaultAppointments, null, 2));
+    return [...defaultAppointments];
+  }
+}
+
+function saveAppointments() {
+  fs.mkdirSync(DATA_DIR, { recursive: true });
+  fs.writeFileSync(APPOINTMENTS_FILE, JSON.stringify(appointments, null, 2));
+}
 
 const defaultDoctors = [
   { id: 1, name: 'Dr. Ada Okafor', specialty: 'General Medicine', active: true, presentToday: true },
   { id: 2, name: 'Dr. Michael Chen', specialty: 'Cardiology', active: false, presentToday: false },
   { id: 3, name: 'Dr. Sara Ibrahim', specialty: 'Pediatrics', active: true, presentToday: true }
 ];
+
+function loadPatients() {
+  try {
+    const existing = JSON.parse(fs.readFileSync(PATIENTS_FILE, 'utf8'));
+    return existing.map(patient => ({
+      ...patient,
+      registrationDate: patient.registrationDate || todayDate
+    }));
+  } catch {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+    fs.writeFileSync(PATIENTS_FILE, JSON.stringify(defaultPatients, null, 2));
+    return [...defaultPatients];
+  }
+}
+
+function savePatients() {
+  fs.mkdirSync(DATA_DIR, { recursive: true });
+  fs.writeFileSync(PATIENTS_FILE, JSON.stringify(patients, null, 2));
+}
 
 function loadDoctors() {
   try {
@@ -42,6 +101,8 @@ function saveDoctors() {
   fs.writeFileSync(DOCTORS_FILE, JSON.stringify(doctors, null, 2));
 }
 
+let patients = loadPatients();
+let appointments = loadAppointments();
 let doctors = loadDoctors();
 
 let staff = [
@@ -199,13 +260,19 @@ const server = http.createServer((req, res) => {
   }
 
   if (req.method === 'GET' && url.pathname === '/api/overview') {
+    const today = getCurrentDateString();
+    const todayAppointments = appointments.filter(appointment => appointment.date === today).length;
+    const upcomingAppointments = appointments.filter(appointment => appointment.date > today).length;
+
     sendJson(res, 200, {
       success: true,
       message: 'Hospital overview loaded successfully',
       data: {
         patients: patients.length,
         appointments: appointments.length,
-        doctors: doctors.length
+        doctors: doctors.length,
+        todayAppointments,
+        upcomingAppointments
       }
     });
     return;
@@ -219,12 +286,27 @@ const server = http.createServer((req, res) => {
   if (req.method === 'POST' && url.pathname === '/api/patients') {
     parseBody(req, body => {
       const { name, age, doctor, status } = body;
-      if (!name || !age || !doctor) {
-        sendJson(res, 400, { success: false, message: 'Name, age and doctor are required.' });
+      const parsedAge = Number(age);
+
+      if (!name || !doctor || !Number.isFinite(parsedAge) || parsedAge <= 0) {
+        sendJson(res, 400, {
+          success: false,
+          message: !name || !doctor ? 'Name and doctor are required.' : 'Please enter a valid age.'
+        });
         return;
       }
-      const patient = { id: Date.now(), name, age: Number(age), doctor, status: status || 'Registered' };
+
+      const patient = {
+        id: Date.now(),
+        name: String(name).trim(),
+        age: parsedAge,
+        doctor: String(doctor).trim(),
+        status: status ? String(status).trim() : 'Registered',
+        registrationDate: getCurrentDateString()
+      };
+
       patients.push(patient);
+      savePatients();
       sendJson(res, 201, { success: true, message: 'Patient registered successfully', data: patient });
     });
     return;
@@ -237,13 +319,51 @@ const server = http.createServer((req, res) => {
 
   if (req.method === 'POST' && url.pathname === '/api/appointments') {
     parseBody(req, body => {
-      const { patientName, date, doctor, status } = body;
+      const { patientName, date, doctor, status, time } = body;
       if (!patientName || !date || !doctor) {
         sendJson(res, 400, { success: false, message: 'Patient name, date and doctor are required.' });
         return;
       }
-      const appointment = { id: Date.now(), patientName, date, doctor, status: status || 'Pending' };
+
+      const appointmentDate = String(date).trim();
+      const selectedTime = String(time || '08:00').trim();
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(appointmentDate)) {
+        sendJson(res, 400, { success: false, message: 'Please choose a valid appointment date.' });
+        return;
+      }
+      if (!validTimeSlots.includes(selectedTime)) {
+        sendJson(res, 400, { success: false, message: 'Please choose a valid appointment time slot.' });
+        return;
+      }
+
+      const today = getCurrentDateString();
+      if (appointmentDate < today) {
+        sendJson(res, 400, { success: false, message: 'Appointment date cannot be in the past.' });
+        return;
+      }
+
+      if (appointmentDate === today) {
+        const now = new Date();
+        const [hours, minutes] = selectedTime.split(':').map(Number);
+        const appointmentMinutes = hours * 60 + minutes;
+        const currentMinutes = now.getHours() * 60 + now.getMinutes();
+        if (appointmentMinutes <= currentMinutes) {
+          sendJson(res, 400, { success: false, message: 'Appointment time must be later than the current time for today.' });
+          return;
+        }
+      }
+
+      const appointment = {
+        id: Date.now(),
+        patientName: String(patientName).trim(),
+        date: appointmentDate,
+        time: selectedTime,
+        doctor: String(doctor).trim(),
+        status: status ? String(status).trim() : 'Pending'
+      };
+
       appointments.push(appointment);
+      saveAppointments();
       sendJson(res, 201, { success: true, message: 'Appointment booked successfully', data: appointment });
     });
     return;

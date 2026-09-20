@@ -13,7 +13,10 @@
         <h2>Book Appointment</h2>
         <form id="appointment-form">
           <input type="text" name="patientName" placeholder="Patient name" required />
-          <input type="date" name="date" required />
+          <input type="date" id="appointment-date" name="date" required />
+          <select name="time" id="appointment-time" required>
+            <option value="">Select a time</option>
+          </select>
           <select name="doctor" id="appointment-doctor-select" required></select>
           <input type="text" name="status" placeholder="Status" />
           <button type="submit">Book appointment</button>
