@@ -9,16 +9,21 @@
   <body>
     <main class="container page-shell">
       <div class="page-nav"><a href="/">← Back to home</a></div>
-      <div class="card">
-        <h2>Register Patient</h2>
-        <form id="patient-form">
-          <input type="text" name="name" placeholder="Patient name" required />
-          <input type="number" name="age" placeholder="Age" min="1" required />
-          <select name="doctor" id="doctor-select" required></select>
-          <input type="text" name="status" placeholder="Status" />
-          <button type="submit">Register patient</button>
-        </form>
-        <div id="patient-message" class="message"></div>
+      <div class="care-form-layout">
+        <div class="care-visual-panel">
+          <img src="/images/patient-care.svg" alt="Healthcare patient registration illustration" />
+        </div>
+        <div class="card form-card">
+          <h2>Register Patient</h2>
+          <form id="patient-form">
+            <input type="text" name="name" placeholder="Patient name" required />
+            <input type="number" name="age" placeholder="Age" min="1" required />
+            <select name="doctor" id="doctor-select" required></select>
+            <input type="text" name="status" placeholder="Status" />
+            <button type="submit">Register patient</button>
+          </form>
+          <div id="patient-message" class="message"></div>
+        </div>
       </div>
 
       <div class="card" style="margin-top: 1rem;">

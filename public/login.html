@@ -7,18 +7,23 @@
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
-    <main class="container page-shell">
+    <main class="container page-shell login-page-shell">
       <div class="page-nav"><a href="/">← Back to home</a></div>
-      <div class="card login-card">
-        <div class="character-bubble nurse">👩‍⚕️</div>
-        <h2>Welcome Back</h2>
-        <p>Sign in to access the hospital portal.</p>
-        <form id="login-form">
-          <input type="text" name="username" placeholder="Username" autocomplete="username" required />
-          <input type="password" name="password" placeholder="Password" autocomplete="current-password" required />
-          <button type="submit">Login</button>
-        </form>
-        <div id="login-message" class="message"></div>
+      <div class="login-layout">
+        <div class="login-visual-panel">
+          <img src="/images/login-care.svg" alt="Hospital staff and patient care illustration" />
+        </div>
+        <div class="card login-card">
+          <div class="character-bubble nurse">👩‍⚕️</div>
+          <h2>Welcome Back</h2>
+          <p>Sign in to access the hospital portal.</p>
+          <form id="login-form">
+            <input type="text" name="username" placeholder="Username" autocomplete="username" required />
+            <input type="password" name="password" placeholder="Password" autocomplete="current-password" required />
+            <button type="submit">Login</button>
+          </form>
+          <div id="login-message" class="message"></div>
+        </div>
       </div>
     </main>
     <script src="/app.js"></script>

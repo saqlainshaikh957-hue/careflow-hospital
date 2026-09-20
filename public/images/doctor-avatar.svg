@@ -1,0 +1,20 @@
+<svg width="240" height="240" viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="dgrad" x1="34" y1="26" x2="195" y2="214" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#E7F8FA"/>
+      <stop offset="1" stop-color="#D5F1F5"/>
+    </linearGradient>
+  </defs>
+  <rect width="240" height="240" rx="32" fill="url(#dgrad)"/>
+  <circle cx="120" cy="96" r="48" fill="#F7D7A9"/>
+  <path d="M82 168C82 140.386 104.386 118 132 118H142C169.614 118 192 140.386 192 168V188H82V168Z" fill="#0F6C84"/>
+  <path d="M87 90C87 60.1766 111.177 36 141 36H146C175.823 36 200 60.1766 200 90V99H87V90Z" fill="#0D485F"/>
+  <circle cx="120" cy="90" r="56" fill="#F8D8A5"/>
+  <path d="M101 80C101 59.0132 118.013 42 139 42H144C164.987 42 182 59.0132 182 80V92H101V80Z" fill="#0D485F"/>
+  <circle cx="120" cy="78" r="16" fill="#F7D7A9"/>
+  <circle cx="106" cy="92" r="4" fill="#0D485F"/>
+  <circle cx="136" cy="92" r="4" fill="#0D485F"/>
+  <path d="M110 110C117.074 116.486 126.947 116.775 134 110" stroke="#0D485F" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="184" cy="56" r="18" fill="#F6D36F"/>
+  <path d="M184 43V69M171 56H197" stroke="#0D485F" stroke-width="5" stroke-linecap="round"/>
+</svg>

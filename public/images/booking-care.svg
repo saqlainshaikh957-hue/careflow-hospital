@@ -1,0 +1,30 @@
+<svg width="760" height="620" viewBox="0 0 760 620" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bbg" x1="80" y1="40" x2="680" y2="600" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#EAF8FB"/>
+      <stop offset="1" stop-color="#DDF4F4"/>
+    </linearGradient>
+    <linearGradient id="bcard" x1="180" y1="120" x2="560" y2="470" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0E839B"/>
+      <stop offset="1" stop-color="#0A5268"/>
+    </linearGradient>
+  </defs>
+  <rect width="760" height="620" rx="32" fill="url(#bbg)"/>
+  <circle cx="600" cy="150" r="82" fill="#D8F2F6"/>
+  <circle cx="150" cy="500" r="96" fill="#DBF5F0"/>
+  <rect x="150" y="120" width="470" height="340" rx="30" fill="url(#bcard)"/>
+  <rect x="194" y="170" width="180" height="230" rx="24" fill="#F7FDFF"/>
+  <rect x="410" y="185" width="170" height="100" rx="18" fill="#ECFBF8"/>
+  <rect x="410" y="310" width="170" height="60" rx="18" fill="#ECFBF8"/>
+  <circle cx="286" cy="236" r="46" fill="#F8D9A6"/>
+  <path d="M244 290C244 248.026 277.026 215 319 215H328C369.974 215 403 248.026 403 290V307H244V290Z" fill="#0A5268"/>
+  <path d="M447 222H536" stroke="#0E839B" stroke-width="10" stroke-linecap="round"/>
+  <path d="M447 250H520" stroke="#0E839B" stroke-width="10" stroke-linecap="round"/>
+  <path d="M436 336H539" stroke="#0E839B" stroke-width="10" stroke-linecap="round"/>
+  <path d="M436 358H551" stroke="#0E839B" stroke-width="10" stroke-linecap="round"/>
+  <path d="M130 490H610" stroke="#B6E4EA" stroke-width="18" stroke-linecap="round"/>
+  <rect x="110" y="110" width="70" height="70" rx="18" fill="#F6D36F"/>
+  <path d="M145 126V161M128 144H162" stroke="#0A5268" stroke-width="7" stroke-linecap="round"/>
+  <circle cx="618" cy="492" r="18" fill="#6DD1DA"/>
+  <path d="M612 492H624M618 486V498" stroke="#0A5268" stroke-width="4" stroke-linecap="round"/>
+</svg>

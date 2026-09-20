@@ -9,9 +9,12 @@
   <body>
     <main class="container page-shell">
       <div class="page-nav"><a href="/">← Back to home</a></div>
-      <div class="card">
+      <div class="card admin-hero-card">
         <div style="display: flex; justify-content: space-between; align-items: center; gap: 1rem;">
-          <h2>Admin Dashboard</h2>
+          <div>
+            <p class="section-kicker">Admin dashboard</p>
+            <h2>CareFlow Operations</h2>
+          </div>
           <button type="button" id="logout-button" class="btn secondary">Logout</button>
         </div>
         <p>Manage doctors, patients, and staff efficiently.</p>
@@ -20,6 +23,30 @@
           <li>• Review patient registrations</li>
           <li>• Manage staff schedules and access</li>
         </ul>
+      </div>
+
+      <div class="admin-metrics-grid">
+        <div class="metric-card">
+          <div class="metric-icon">🩺</div>
+          <div>
+            <span>Doctors</span>
+            <strong id="admin-doctor-metric">0</strong>
+          </div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-icon">👥</div>
+          <div>
+            <span>Patients</span>
+            <strong id="admin-patient-metric">0</strong>
+          </div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-icon">🧑‍💼</div>
+          <div>
+            <span>Staff</span>
+            <strong id="admin-staff-metric">0</strong>
+          </div>
+        </div>
       </div>
 
       <div class="card" style="margin-top: 1rem;">
