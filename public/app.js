@@ -36,6 +36,16 @@ const doctorPortalAppointments = document.getElementById('doctor-portal-appointm
 const bookingDateInput = document.getElementById('appointment-date');
 const bookingTimeSelect = document.getElementById('appointment-time');
 
+const doctorImageMap = {
+  'dr. ada okafor': '/images/doctor-ada.jpg',
+  'dr. michael chen': '/images/doctor-michael.jpg',
+  'dr. sara ibrahim': '/images/doctor-sara.jpg'
+};
+
+function getDoctorImage(doctor) {
+  return doctorImageMap[String(doctor.name || '').toLowerCase()] || '/images/doctor-default.jpg';
+}
+
 function getLocalDateString(date = new Date()) {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -229,10 +239,11 @@ function renderDoctorAvailability(items) {
     doctorAvailabilityList.innerHTML = items.length
       ? items.map(item => `
         <div class="doctor-card">
-          <strong>${item.name}</strong>
+          <img class="doctor-card-image" src="${getDoctorImage(item)}" alt="Professional portrait of ${item.name}" />
+          <div class="doctor-card-details"><strong>${item.name}</strong>
           <div>${item.specialty}</div>
           <div>Presence: <strong>${item.presentToday ? 'Present today' : 'Not present today'}</strong></div>
-          <span class="doctor-status ${item.active ? 'active' : 'inactive'}">${item.active ? 'Available' : 'Unavailable'}</span>
+          <span class="doctor-status ${item.active ? 'active' : 'inactive'}">${item.active ? 'Available' : 'Unavailable'}</span></div>
         </div>
       `).join('')
       : '<div class="doctor-card">No doctors available.</div>';
@@ -245,10 +256,11 @@ function renderDoctorDirectory(items) {
     target.innerHTML = items.length
       ? items.map(item => `
         <div class="doctor-card">
-          <strong>${item.name}</strong>
+          <img class="doctor-card-image" src="${getDoctorImage(item)}" alt="Professional portrait of ${item.name}" />
+          <div class="doctor-card-details"><strong>${item.name}</strong>
           <div>${item.specialty}</div>
           <div>Presence: <strong>${item.presentToday ? 'Present today' : 'Not present today'}</strong></div>
-          <span class="doctor-status ${item.active ? 'active' : 'inactive'}">${item.active ? 'Available' : 'Unavailable'}</span>
+          <span class="doctor-status ${item.active ? 'active' : 'inactive'}">${item.active ? 'Available' : 'Unavailable'}</span></div>
         </div>
       `).join('')
       : '<div class="doctor-card">No doctors available.</div>';
