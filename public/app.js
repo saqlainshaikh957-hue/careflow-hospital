@@ -40,7 +40,7 @@ const doctorImageMap = {
   'dr. ada okafor': '/images/doctor-ada.jpg',
   'dr. michael chen': '/images/doctor-michael.jpg',
   'dr. sara ibrahim': '/images/doctor-sara.jpg',
-  'dr. priya nair': '/images/doctor-priya.jpg',
+  'dr. priyansh nair': '/images/doctor-priya.jpg',
   'dr. james adeyemi': '/images/doctor-james.jpg'
 };
 const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
