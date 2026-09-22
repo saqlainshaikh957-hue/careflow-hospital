@@ -41,9 +41,19 @@ const doctorImageMap = {
   'dr. michael chen': '/images/doctor-michael.jpg',
   'dr. sara ibrahim': '/images/doctor-sara.jpg'
 };
+const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 function getDoctorImage(doctor) {
   return doctorImageMap[String(doctor.name || '').toLowerCase()] || '/images/doctor-default.jpg';
+}
+
+function isDoctorAvailableOnDate(doctor, dateValue) {
+  if (doctor.availabilityDay === undefined || !dateValue) return true;
+  return new Date(`${dateValue}T12:00:00`).getDay() === doctor.availabilityDay;
+}
+
+function getDoctorAvailabilityLabel(doctor) {
+  return doctor.availabilityLabel || 'Available during regular clinic hours';
 }
 
 function getLocalDateString(date = new Date()) {
@@ -94,6 +104,7 @@ function updateTimeSlots() {
   if (!bookingDateInput || !bookingTimeSelect) return;
 
   const selectedDate = bookingDateInput.value || getTodayISO();
+  if (window.hospitalDoctors) renderDoctors(window.hospitalDoctors);
   const slots = getAvailableTimeSlots(selectedDate);
   const doctorSelect = document.getElementById('appointment-doctor-select');
   const bookedTimes = (window.hospitalAppointments || [])
@@ -173,18 +184,21 @@ function renderAppointments(items) {
 function renderDoctors(items) {
   doctorSelects.forEach(select => {
     if (!select) return;
-    if (!items.length) {
-      select.innerHTML = '<option value="">No doctors available</option>';
+    const availableItems = select.id === 'appointment-doctor-select' && bookingDateInput
+      ? items.filter(item => isDoctorAvailableOnDate(item, bookingDateInput.value))
+      : items;
+    if (!availableItems.length) {
+      select.innerHTML = '<option value="">No doctors available for this date</option>';
       return;
     }
-    select.innerHTML = '<option value="">Select a doctor</option>' + items.map(doc => `<option value="${doc.name}">${doc.name} — ${doc.specialty}</option>`).join('');
+    select.innerHTML = '<option value="">Select a doctor</option>' + availableItems.map(doc => `<option value="${doc.name}">${doc.name} — ${doc.specialty} (${getDoctorAvailabilityLabel(doc)})</option>`).join('');
   });
 }
 
 function renderAdminDoctors(items) {
   if (!adminDoctorsList) return;
   adminDoctorsList.innerHTML = items.length
-    ? items.map(item => `<li class="list-item"><strong>${item.name}</strong><div>${item.specialty}</div></li>`).join('')
+    ? items.map(item => `<li class="list-item"><strong>${item.name}</strong><div>${item.specialty}</div><div>${getDoctorAvailabilityLabel(item)}</div></li>`).join('')
     : '<li>No doctors available.</li>';
 }
 
@@ -242,6 +256,7 @@ function renderDoctorAvailability(items) {
           <img class="doctor-card-image" src="${getDoctorImage(item)}" alt="Professional portrait of ${item.name}" />
           <div class="doctor-card-details"><strong>${item.name}</strong>
           <div>${item.specialty}</div>
+          <div>${getDoctorAvailabilityLabel(item)}</div>
           <div>Presence: <strong>${item.presentToday ? 'Present today' : 'Not present today'}</strong></div>
           <span class="doctor-status ${item.active ? 'active' : 'inactive'}">${item.active ? 'Available' : 'Unavailable'}</span></div>
         </div>
@@ -259,6 +274,7 @@ function renderDoctorDirectory(items) {
           <img class="doctor-card-image" src="${getDoctorImage(item)}" alt="Professional portrait of ${item.name}" />
           <div class="doctor-card-details"><strong>${item.name}</strong>
           <div>${item.specialty}</div>
+          <div>${getDoctorAvailabilityLabel(item)}</div>
           <div>Presence: <strong>${item.presentToday ? 'Present today' : 'Not present today'}</strong></div>
           <span class="doctor-status ${item.active ? 'active' : 'inactive'}">${item.active ? 'Available' : 'Unavailable'}</span></div>
         </div>
@@ -270,7 +286,7 @@ function renderDoctorDirectory(items) {
 function renderHomepageDoctors(items) {
   if (!homepageDoctorsList) return;
   homepageDoctorsList.innerHTML = items.length
-    ? items.map(item => `<li><strong>${item.name}</strong> · ${item.specialty}</li>`).join('')
+    ? items.map(item => `<li><strong>${item.name}</strong> · ${item.specialty} · ${getDoctorAvailabilityLabel(item)}</li>`).join('')
     : '<li>No doctors available.</li>';
 }
 
@@ -310,7 +326,7 @@ async function submitForm(form, endpoint, messageEl, successRenderer) {
 
   const result = await response.json();
 
-  if (result.success && successRenderer) {
+  if (result.success && successRe  /images/hero-hospital.jpg  /images/hero-hospital.jpg  /images/hero-hospital.jpgnderer) {
     setMessage(messageEl, successRenderer(result.data || payload, result), true);
   } else {
     setMessage(messageEl, result.message || 'Something went wrong.', false);
@@ -355,6 +371,7 @@ async function loadData() {
     const patientRecordsData = await patientRecordsRes.json();
 
     window.hospitalAppointments = appointments.data || [];
+    window.hospitalDoctors = doctors.data || [];
 
     if (statsContainer) renderStats(overview.data || {});
     if (adminOverviewStats) renderAdminOverview(overview.data || {});

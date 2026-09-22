@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
+require('dotenv').config();
 
 const PORT = process.env.PORT || 3000;
 const PUBLIC_DIR = path.join(__dirname, 'public');
@@ -62,9 +63,11 @@ function saveAppointments() {
 }
 
 const defaultDoctors = [
-  { id: 1, name: 'Dr. Ada Okafor', specialty: 'General Medicine', active: true, presentToday: true },
-  { id: 2, name: 'Dr. Michael Chen', specialty: 'Cardiology', active: false, presentToday: false },
-  { id: 3, name: 'Dr. Sara Ibrahim', specialty: 'Pediatrics', active: true, presentToday: true }
+  { id: 1, name: 'Dr. Ada Okafor', specialty: 'General Medicine', active: true, presentToday: true, availabilityLabel: 'Available every weekday' },
+  { id: 2, name: 'Dr. Michael Chen', specialty: 'Cardiology', active: false, presentToday: false, availabilityDay: 2, availabilityLabel: 'Cardiology clinic every Tuesday' },
+  { id: 3, name: 'Dr. Sara Ibrahim', specialty: 'Pediatrics', active: true, presentToday: true, availabilityLabel: 'Available Monday to Friday' },
+  { id: 4, name: 'Dr. Priya Nair', specialty: 'Neurology', active: true, presentToday: false, availabilityDay: 4, availabilityLabel: 'Neurology clinic every Thursday' },
+  { id: 5, name: 'Dr. James Adeyemi', specialty: 'Dermatology', active: true, presentToday: false, availabilityDay: 6, availabilityLabel: 'Dermatology clinic every Saturday' }
 ];
 
 function loadPatients() {
@@ -349,6 +352,22 @@ const server = http.createServer((req, res) => {
         const currentMinutes = now.getHours() * 60 + now.getMinutes();
         if (appointmentMinutes <= currentMinutes) {
           sendJson(res, 400, { success: false, message: 'Appointment time must be later than the current time for today.' });
+          return;
+        }
+      }
+
+      const selectedDoctor = doctors.find(item => item.name === String(doctor).trim());
+      if (!selectedDoctor) {
+        sendJson(res, 400, { success: false, message: 'Please choose a valid doctor.' });
+        return;
+      }
+      if (selectedDoctor.availabilityDay !== undefined) {
+        const appointmentDay = new Date(`${appointmentDate}T12:00:00`).getDay();
+        if (appointmentDay !== selectedDoctor.availabilityDay) {
+          sendJson(res, 400, {
+            success: false,
+            message: `${selectedDoctor.name} accepts appointments ${selectedDoctor.availabilityLabel.toLowerCase()}.`
+          });
           return;
         }
       }

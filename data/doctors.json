@@ -1,0 +1,45 @@
+[
+  {
+    "id": 1,
+    "name": "Dr. Ada Okafor",
+    "specialty": "General Medicine",
+    "active": true,
+    "presentToday": true,
+    "availabilityLabel": "Available every weekday"
+  },
+  {
+    "id": 2,
+    "name": "Dr. Michael Chen",
+    "specialty": "Cardiology",
+    "active": false,
+    "presentToday": false,
+    "availabilityDay": 2,
+    "availabilityLabel": "Cardiology clinic every Tuesday"
+  },
+  {
+    "id": 3,
+    "name": "Dr. Sara Ibrahim",
+    "specialty": "Pediatrics",
+    "active": true,
+    "presentToday": true,
+    "availabilityLabel": "Available Monday to Friday"
+  },
+  {
+    "id": 4,
+    "name": "Dr. Priya Nair",
+    "specialty": "Neurology",
+    "active": true,
+    "presentToday": false,
+    "availabilityDay": 4,
+    "availabilityLabel": "Neurology clinic every Thursday"
+  },
+  {
+    "id": 5,
+    "name": "Dr. James Adeyemi",
+    "specialty": "Dermatology",
+    "active": true,
+    "presentToday": false,
+    "availabilityDay": 6,
+    "availabilityLabel": "Dermatology clinic every Saturday"
+  }
+]
