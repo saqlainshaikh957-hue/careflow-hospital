@@ -106,6 +106,7 @@ function updateTimeSlots() {
   if (!bookingDateInput || !bookingTimeSelect) return;
 
   const selectedDate = bookingDateInput.value || getTodayISO();
+  const selectedTime = bookingTimeSelect.value;
   if (window.hospitalDoctors) renderDoctors(window.hospitalDoctors);
   const slots = getAvailableTimeSlots(selectedDate);
   const doctorSelect = document.getElementById('appointment-doctor-select');
@@ -120,6 +121,9 @@ function updateTimeSlots() {
         return `<option value="${slot}" ${disabled}>${label}</option>`;
       }).join('')}`
     : '<option value="">No slots available</option>';
+  if (selectedTime && slots.includes(selectedTime) && !bookedTimes.includes(selectedTime)) {
+    bookingTimeSelect.value = selectedTime;
+  }
 }
 
 function renderStats(data) {
@@ -186,6 +190,7 @@ function renderAppointments(items) {
 function renderDoctors(items) {
   doctorSelects.forEach(select => {
     if (!select) return;
+    const selectedDoctor = select.value;
     const availableItems = select.id === 'appointment-doctor-select' && bookingDateInput
       ? items.filter(item => isDoctorAvailableOnDate(item, bookingDateInput.value))
       : items;
@@ -194,6 +199,9 @@ function renderDoctors(items) {
       return;
     }
     select.innerHTML = '<option value="">Select a doctor</option>' + availableItems.map(doc => `<option value="${doc.name}">${doc.name} — ${doc.specialty} (${getDoctorAvailabilityLabel(doc)})</option>`).join('');
+    if (availableItems.some(item => item.name === selectedDoctor)) {
+      select.value = selectedDoctor;
+    }
   });
 }
 
@@ -328,7 +336,7 @@ async function submitForm(form, endpoint, messageEl, successRenderer) {
 
   const result = await response.json();
 
-  if (result.success && successRe  /images/hero-hospital.jpg  /images/hero-hospital.jpg  /images/hero-hospital.jpgnderer) {
+  if (result.success && successRenderer) {
     setMessage(messageEl, successRenderer(result.data || payload, result), true);
   } else {
     setMessage(messageEl, result.message || 'Something went wrong.', false);
