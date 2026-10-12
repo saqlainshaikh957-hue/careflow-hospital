@@ -5,6 +5,7 @@
     "specialty": "General Medicine",
     "active": true,
     "presentToday": true,
+    "availabilityDays": [1, 2, 3, 4, 5],
     "availabilityLabel": "Available every weekday"
   },
   {
@@ -14,6 +15,7 @@
     "active": false,
     "presentToday": false,
     "availabilityDay": 2,
+    "availabilityDays": [2],
     "availabilityLabel": "Cardiology clinic every Tuesday"
   },
   {
@@ -22,6 +24,7 @@
     "specialty": "Pediatrics",
     "active": true,
     "presentToday": true,
+    "availabilityDays": [1, 2, 3, 4, 5],
     "availabilityLabel": "Available Monday to Friday"
   },
   {
@@ -31,6 +34,7 @@
     "active": true,
     "presentToday": false,
     "availabilityDay": 4,
+    "availabilityDays": [4],
     "availabilityLabel": "Neurology clinic every Thursday"
   },
   {
@@ -40,6 +44,7 @@
     "active": true,
     "presentToday": false,
     "availabilityDay": 6,
+    "availabilityDays": [6],
     "availabilityLabel": "Dermatology clinic every Saturday"
   }
 ]

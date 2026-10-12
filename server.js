@@ -63,11 +63,11 @@ function saveAppointments() {
 }
 
 const defaultDoctors = [
-  { id: 1, name: 'Dr. Ada Okafor', specialty: 'General Medicine', active: true, presentToday: true, availabilityLabel: 'Available every weekday' },
-  { id: 2, name: 'Dr. Michael Chen', specialty: 'Cardiology', active: false, presentToday: false, availabilityDay: 2, availabilityLabel: 'Cardiology clinic every Tuesday' },
-  { id: 3, name: 'Dr. Sara Ibrahim', specialty: 'Pediatrics', active: true, presentToday: true, availabilityLabel: 'Available Monday to Friday' },
-  { id: 4, name: 'Dr. Priyansh Nair', specialty: 'Neurology', active: true, presentToday: false, availabilityDay: 4, availabilityLabel: 'Neurology clinic every Thursday' },
-  { id: 5, name: 'Dr. James Adeyemi', specialty: 'Dermatology', active: true, presentToday: false, availabilityDay: 6, availabilityLabel: 'Dermatology clinic every Saturday' }
+  { id: 1, name: 'Dr. Ada Okafor', specialty: 'General Medicine', active: true, presentToday: true, availabilityDays: [1, 2, 3, 4, 5], availabilityLabel: 'Available every weekday' },
+  { id: 2, name: 'Dr. Michael Chen', specialty: 'Cardiology', active: false, presentToday: false, availabilityDay: 2, availabilityDays: [2], availabilityLabel: 'Cardiology clinic every Tuesday' },
+  { id: 3, name: 'Dr. Sara Ibrahim', specialty: 'Pediatrics', active: true, presentToday: true, availabilityDays: [1, 2, 3, 4, 5], availabilityLabel: 'Available Monday to Friday' },
+  { id: 4, name: 'Dr. Priyansh Nair', specialty: 'Neurology', active: true, presentToday: false, availabilityDay: 4, availabilityDays: [4], availabilityLabel: 'Neurology clinic every Thursday' },
+  { id: 5, name: 'Dr. James Adeyemi', specialty: 'Dermatology', active: true, presentToday: false, availabilityDay: 6, availabilityDays: [6], availabilityLabel: 'Dermatology clinic every Saturday' }
 ];
 
 function loadPatients() {
@@ -361,9 +361,16 @@ const server = http.createServer((req, res) => {
         sendJson(res, 400, { success: false, message: 'Please choose a valid doctor.' });
         return;
       }
-      if (selectedDoctor.availabilityDay !== undefined) {
+      if (selectedDoctor.active !== true) {
+        sendJson(res, 400, { success: false, message: `${selectedDoctor.name} is currently unavailable.` });
+        return;
+      }
+      const doctorAvailabilityDays = Array.isArray(selectedDoctor.availabilityDays)
+        ? selectedDoctor.availabilityDays
+        : selectedDoctor.availabilityDay !== undefined ? [selectedDoctor.availabilityDay] : null;
+      if (doctorAvailabilityDays) {
         const appointmentDay = new Date(`${appointmentDate}T12:00:00`).getDay();
-        if (appointmentDay !== selectedDoctor.availabilityDay) {
+        if (!doctorAvailabilityDays.includes(appointmentDay)) {
           sendJson(res, 400, {
             success: false,
             message: `${selectedDoctor.name} accepts appointments ${selectedDoctor.availabilityLabel.toLowerCase()}.`

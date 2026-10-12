@@ -50,8 +50,11 @@ function getDoctorImage(doctor) {
 }
 
 function isDoctorAvailableOnDate(doctor, dateValue) {
-  if (doctor.availabilityDay === undefined || !dateValue) return true;
-  return new Date(`${dateValue}T12:00:00`).getDay() === doctor.availabilityDay;
+  if (!dateValue) return true;
+  const day = new Date(`${dateValue}T12:00:00`).getDay();
+  if (Array.isArray(doctor.availabilityDays)) return doctor.availabilityDays.includes(day);
+  if (doctor.availabilityDay !== undefined) return day === doctor.availabilityDay;
+  return true;
 }
 
 function getDoctorAvailabilityLabel(doctor) {
@@ -192,8 +195,8 @@ function renderDoctors(items) {
     if (!select) return;
     const selectedDoctor = select.value;
     const availableItems = select.id === 'appointment-doctor-select' && bookingDateInput
-      ? items.filter(item => isDoctorAvailableOnDate(item, bookingDateInput.value))
-      : items;
+      ? items.filter(item => item.active === true && isDoctorAvailableOnDate(item, bookingDateInput.value))
+      : items.filter(item => item.active === true);
     if (!availableItems.length) {
       select.innerHTML = '<option value="">No doctors available for this date</option>';
       return;
@@ -220,7 +223,7 @@ function renderAdminStaff(items) {
 }
 
 function renderPresence(doctors, staff) {
-  const presentDoctors = doctors.filter(item => item.presentToday === true);
+  const presentDoctors = doctors.filter(item => isDoctorAvailableOnDate(item, getTodayISO()));
   const presentStaff = staff.filter(item => item.presentToday === true);
 
   if (doctorPresenceCount) {
@@ -253,7 +256,7 @@ function renderPatientRecords(items) {
 
 function renderDoctorAvailability(items) {
   if (!doctorCountMessage && !doctorAvailabilityList) return;
-  const availableDoctors = items.filter(item => item.active === true);
+  const availableDoctors = items.filter(item => item.active === true && isDoctorAvailableOnDate(item, getTodayISO()));
   if (doctorCountMessage) {
     doctorCountMessage.textContent = availableDoctors.length > 0
       ? `Available doctors: ${availableDoctors.length} / ${items.length}`
@@ -261,16 +264,20 @@ function renderDoctorAvailability(items) {
   }
   if (doctorAvailabilityList) {
     doctorAvailabilityList.innerHTML = items.length
-      ? items.map(item => `
+      ? items.map(item => {
+        const presentToday = isDoctorAvailableOnDate(item, getTodayISO());
+        const availableToday = item.active === true && presentToday;
+        return `
         <div class="doctor-card">
           <img class="doctor-card-image" src="${getDoctorImage(item)}" alt="Professional portrait of ${item.name}" />
           <div class="doctor-card-details"><strong>${item.name}</strong>
           <div>${item.specialty}</div>
           <div>${getDoctorAvailabilityLabel(item)}</div>
-          <div>Presence: <strong>${item.presentToday ? 'Present today' : 'Not present today'}</strong></div>
-          <span class="doctor-status ${item.active ? 'active' : 'inactive'}">${item.active ? 'Available' : 'Unavailable'}</span></div>
+          <div>Presence: <strong>${presentToday ? 'Present today' : 'Not present today'}</strong></div>
+          <span class="doctor-status ${availableToday ? 'active' : 'inactive'}">${availableToday ? 'Available' : 'Unavailable'}</span></div>
         </div>
-      `).join('')
+      `;
+      }).join('')
       : '<div class="doctor-card">No doctors available.</div>';
   }
 }
@@ -279,16 +286,20 @@ function renderDoctorDirectory(items) {
   const targets = [doctorDirectoryList, patientDoctorDirectoryList].filter(Boolean);
   targets.forEach(target => {
     target.innerHTML = items.length
-      ? items.map(item => `
+      ? items.map(item => {
+        const presentToday = isDoctorAvailableOnDate(item, getTodayISO());
+        const availableToday = item.active === true && presentToday;
+        return `
         <div class="doctor-card">
           <img class="doctor-card-image" src="${getDoctorImage(item)}" alt="Professional portrait of ${item.name}" />
           <div class="doctor-card-details"><strong>${item.name}</strong>
           <div>${item.specialty}</div>
           <div>${getDoctorAvailabilityLabel(item)}</div>
-          <div>Presence: <strong>${item.presentToday ? 'Present today' : 'Not present today'}</strong></div>
-          <span class="doctor-status ${item.active ? 'active' : 'inactive'}">${item.active ? 'Available' : 'Unavailable'}</span></div>
+          <div>Presence: <strong>${presentToday ? 'Present today' : 'Not present today'}</strong></div>
+          <span class="doctor-status ${availableToday ? 'active' : 'inactive'}">${availableToday ? 'Available' : 'Unavailable'}</span></div>
         </div>
-      `).join('')
+      `;
+      }).join('')
       : '<div class="doctor-card">No doctors available.</div>';
   });
 }
